@@ -215,6 +215,7 @@ public class NewObjectSnippets implements Snippets {
         return piCastToSnippetReplaceeStamp(allocateInstanceHelper(size, hub, prototypeMarkWord, fillContents, threadRegister, constantSize, typeContext, counters));
     }
 
+    // [rbruno] here it is how they allocate objects.
     public static Object allocateInstanceHelper(int size, KlassPointer hub, Word prototypeMarkWord, boolean fillContents,
                     Register threadRegister, boolean constantSize, String typeContext, Counters counters) {
         Object result;

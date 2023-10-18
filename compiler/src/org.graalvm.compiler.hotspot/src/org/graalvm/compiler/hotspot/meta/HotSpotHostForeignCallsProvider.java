@@ -326,7 +326,9 @@ public abstract class HotSpotHostForeignCallsProvider extends HotSpotForeignCall
         link(new IntegerExactOverflowExceptionStub(options, providers, registerStubCall(exceptionRuntimeCalls.get(BytecodeExceptionKind.INTEGER_EXACT_OVERFLOW), SAFEPOINT, REEXECUTABLE, any())));
         link(new LongExactOverflowExceptionStub(options, providers, registerStubCall(exceptionRuntimeCalls.get(BytecodeExceptionKind.LONG_EXACT_OVERFLOW), SAFEPOINT, REEXECUTABLE, any())));
 
+        // [rbruno] linking hashcode with foreign call
         linkForeignCall(options, providers, IDENTITY_HASHCODE, c.identityHashCodeAddress, PREPEND_THREAD, SAFEPOINT, REEXECUTABLE_ONLY_AFTER_EXCEPTION, MARK_WORD_LOCATION);
+        linkForeignCall(options, providers, INT_STREAM_SUM, c.intStreamSumAddress, PREPEND_THREAD, SAFEPOINT, REEXECUTABLE_ONLY_AFTER_EXCEPTION, MARK_WORD_LOCATION);
         linkForeignCall(options, providers, REGISTER_FINALIZER, c.registerFinalizerAddress, PREPEND_THREAD, SAFEPOINT, REEXECUTABLE_ONLY_AFTER_EXCEPTION, any());
         linkForeignCall(options, providers, MONITORENTER, c.monitorenterAddress, PREPEND_THREAD, SAFEPOINT, REEXECUTABLE_ONLY_AFTER_EXCEPTION, any());
         linkForeignCall(options, providers, MONITOREXIT, c.monitorexitAddress, PREPEND_THREAD, STACK_INSPECTABLE_LEAF, REEXECUTABLE_ONLY_AFTER_EXCEPTION, any());

@@ -58,6 +58,7 @@ import org.graalvm.compiler.hotspot.replacements.CounterModeSubstitutions;
 import org.graalvm.compiler.hotspot.replacements.HotSpotArraySubstitutions;
 import org.graalvm.compiler.hotspot.replacements.HotSpotClassSubstitutions;
 import org.graalvm.compiler.hotspot.replacements.IdentityHashCodeNode;
+import org.graalvm.compiler.hotspot.replacements.IntStreamSumNode;
 import org.graalvm.compiler.hotspot.replacements.ObjectCloneNode;
 import org.graalvm.compiler.hotspot.replacements.ObjectSubstitutions;
 import org.graalvm.compiler.hotspot.replacements.ReflectionGetCallerClassNode;
@@ -108,6 +109,7 @@ import jdk.vm.ci.meta.ConstantReflectionProvider;
 import jdk.vm.ci.meta.DeoptimizationAction;
 import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.MetaAccessProvider;
+import jdk.vm.ci.meta.PrimitiveConstant;
 import jdk.vm.ci.meta.ResolvedJavaMethod;
 import sun.misc.Unsafe;
 
@@ -172,6 +174,8 @@ public class HotSpotGraphBuilderPlugins {
                 registerGHASHPlugins(invocationPlugins, config, metaAccess, foreignCalls);
                 registerCounterModePlugins(invocationPlugins, config, replacementBytecodeProvider);
                 registerUnsafePlugins(invocationPlugins, replacementBytecodeProvider);
+                // registerIntStreamPlugins1(invocationPlugins, replacementBytecodeProvider);
+                registerIntStreamPlugins3(invocationPlugins, foreignCalls);
                 StandardGraphBuilderPlugins.registerInvocationPlugins(metaAccess, snippetReflection, invocationPlugins, replacementBytecodeProvider, true, false);
                 registerArrayPlugins(invocationPlugins, replacementBytecodeProvider);
                 registerStringPlugins(invocationPlugins, replacementBytecodeProvider);
@@ -281,6 +285,36 @@ public class HotSpotGraphBuilderPlugins {
         }
         r.registerMethodSubstitution(HotSpotUnsafeSubstitutions.class, HotSpotUnsafeSubstitutions.copyMemoryName, "copyMemory", Receiver.class, Object.class, long.class, Object.class, long.class,
                         long.class);
+    }
+
+    // [rbruno] version that calls some java code to replace
+    private static void registerIntStreamPlugins1(InvocationPlugins plugins, BytecodeProvider replacementBytecodeProvider) {
+        Registration r = new Registration(plugins, "java.util.stream.IntPipeline", replacementBytecodeProvider);
+        r.registerMethodSubstitution(HotSpotIntStreamSubstitutions.class, "sum", Receiver.class);
+    }
+
+    // [rbruno] version that creates a compilation node
+    private static void registerIntStreamPlugins2(InvocationPlugins plugins, ForeignCallsProvider foreignCalls) {
+        Registration r = new Registration(plugins, "java.util.stream.IntPipeline");
+        r.register1("sum", Receiver.class, new InvocationPlugin() {
+            @Override
+            public boolean apply(GraphBuilderContext b, ResolvedJavaMethod targetMethod, Receiver receiver) {
+                // b.addPush(JavaKind.Int, ConstantNode.forInt(98765));
+                b.addPush(JavaKind.Int, new IntStreamSumNode(receiver.get()));
+                return true;
+            }
+
+            @Override
+            public boolean inlineOnly() {
+                return true;
+            }
+        });
+    }
+
+    // [rbruno] version that inserts a call to the JVMCI.
+    private static void registerIntStreamPlugins3(InvocationPlugins plugins, ForeignCallsProvider foreignCalls) {
+        Registration r = new Registration(plugins, "java.util.stream.IntPipeline");
+        r.register1("sum", Receiver.class, new ForeignCallPlugin(foreignCalls, HotSpotHostForeignCallsProvider.INT_STREAM_SUM));
     }
 
     private static final LocationIdentity INSTANCE_KLASS_CONSTANTS = NamedLocationIdentity.immutable("InstanceKlass::_constants");

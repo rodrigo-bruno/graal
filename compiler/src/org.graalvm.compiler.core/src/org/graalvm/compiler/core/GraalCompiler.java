@@ -126,6 +126,7 @@ public class GraalCompiler {
     public static <T extends CompilationResult> T compileGraph(StructuredGraph graph, ResolvedJavaMethod installedCodeOwner, Providers providers, Backend backend,
                     PhaseSuite<HighTierContext> graphBuilderSuite, OptimisticOptimizations optimisticOpts, ProfilingInfo profilingInfo, Suites suites, LIRSuites lirSuites, T compilationResult,
                     CompilationResultBuilderFactory factory, boolean verifySourcePositions) {
+        System.out.println(String.format("Graal is compiling %s", installedCodeOwner.getName()));
         return compile(new Request<>(graph, installedCodeOwner, providers, backend, graphBuilderSuite, optimisticOpts, profilingInfo, suites, lirSuites, compilationResult, factory,
                         verifySourcePositions));
     }

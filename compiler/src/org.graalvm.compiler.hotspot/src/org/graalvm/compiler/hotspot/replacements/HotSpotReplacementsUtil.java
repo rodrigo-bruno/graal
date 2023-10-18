@@ -838,6 +838,9 @@ public class HotSpotReplacementsUtil {
     @NodeIntrinsic(ForeignCallNode.class)
     public static native int identityHashCode(@ConstantNodeParameter ForeignCallDescriptor descriptor, Object object);
 
+    @NodeIntrinsic(ForeignCallNode.class)
+    public static native int intStreamSum(@ConstantNodeParameter ForeignCallDescriptor descriptor, Object object);
+
     @Fold
     public static long gcTotalCollectionsAddress(@InjectedParameter GraalHotSpotVMConfig config) {
         return config.gcTotalCollectionsAddress();

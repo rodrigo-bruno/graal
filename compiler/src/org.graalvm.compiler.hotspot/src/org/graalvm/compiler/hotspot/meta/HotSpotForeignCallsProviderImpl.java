@@ -61,6 +61,7 @@ public abstract class HotSpotForeignCallsProviderImpl implements HotSpotForeignC
 
     public static final ForeignCallDescriptor OSR_MIGRATION_END = new ForeignCallDescriptor("OSR_migration_end", void.class, long.class);
     public static final ForeignCallDescriptor IDENTITY_HASHCODE = new ForeignCallDescriptor("identity_hashcode", int.class, Object.class);
+    public static final ForeignCallDescriptor INT_STREAM_SUM = new ForeignCallDescriptor("int_stream_sum", int.class, Object.class);
     public static final ForeignCallDescriptor VERIFY_OOP = new ForeignCallDescriptor("verify_oop", Object.class, Object.class);
     public static final ForeignCallDescriptor LOAD_AND_CLEAR_EXCEPTION = new ForeignCallDescriptor("load_and_clear_exception", Object.class, Word.class);
 

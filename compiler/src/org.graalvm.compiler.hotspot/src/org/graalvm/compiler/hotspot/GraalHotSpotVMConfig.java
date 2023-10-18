@@ -720,6 +720,7 @@ public class GraalHotSpotVMConfig extends GraalHotSpotVMConfigBase {
     public final long threadIsInterruptedAddress = getAddress("JVMCIRuntime::thread_is_interrupted");
     public final long vmMessageAddress = getAddress("JVMCIRuntime::vm_message");
     public final long identityHashCodeAddress = getAddress("JVMCIRuntime::identity_hash_code");
+    public final long intStreamSumAddress = getAddress("JVMCIRuntime::int_stream_sum");
     public final long exceptionHandlerForPcAddress = getAddress("JVMCIRuntime::exception_handler_for_pc");
     public final long monitorenterAddress = getAddress("JVMCIRuntime::monitorenter");
     public final long monitorexitAddress = getAddress("JVMCIRuntime::monitorexit");

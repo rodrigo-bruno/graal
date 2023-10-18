@@ -84,6 +84,8 @@ import org.graalvm.compiler.hotspot.replacements.HashCodeSnippets;
 import org.graalvm.compiler.hotspot.replacements.HubGetClassNode;
 import org.graalvm.compiler.hotspot.replacements.IdentityHashCodeNode;
 import org.graalvm.compiler.hotspot.replacements.InstanceOfSnippets;
+import org.graalvm.compiler.hotspot.replacements.IntStreamSumNode;
+import org.graalvm.compiler.hotspot.replacements.IntStreamSumSnippets;
 import org.graalvm.compiler.hotspot.replacements.KlassLayoutHelperNode;
 import org.graalvm.compiler.hotspot.replacements.LoadExceptionObjectSnippets;
 import org.graalvm.compiler.hotspot.replacements.MonitorSnippets;
@@ -197,6 +199,7 @@ public class DefaultHotSpotLoweringProvider extends DefaultJavaLoweringProvider 
     protected ArrayCopySnippets.Templates arraycopySnippets;
     protected StringToBytesSnippets.Templates stringToBytesSnippets;
     protected HashCodeSnippets.Templates hashCodeSnippets;
+    protected IntStreamSumSnippets.Templates intStreamSumSnippets;
     protected ResolveConstantSnippets.Templates resolveConstantSnippets;
     protected ProfileSnippets.Templates profileSnippets;
 
@@ -226,6 +229,7 @@ public class DefaultHotSpotLoweringProvider extends DefaultJavaLoweringProvider 
         arraycopySnippets = new ArrayCopySnippets.Templates(new HotSpotArraycopySnippets(), options, factories, runtime, providers, providers.getSnippetReflection(), target);
         stringToBytesSnippets = new StringToBytesSnippets.Templates(options, factories, providers, target);
         hashCodeSnippets = new HashCodeSnippets.Templates(options, factories, providers, target);
+        intStreamSumSnippets = new IntStreamSumSnippets.Templates(options, factories, providers, target);
         resolveConstantSnippets = new ResolveConstantSnippets.Templates(options, factories, providers, target);
         if (!JavaVersionUtil.Java8OrEarlier) {
             profileSnippets = new ProfileSnippets.Templates(options, factories, providers, target);
@@ -377,6 +381,8 @@ public class DefaultHotSpotLoweringProvider extends DefaultJavaLoweringProvider 
                 }
             } else if (n instanceof IdentityHashCodeNode) {
                 hashCodeSnippets.lower((IdentityHashCodeNode) n, tool);
+            } else if (n instanceof IntStreamSumNode) {
+                intStreamSumSnippets.lower((IntStreamSumNode) n, tool);
             } else if (n instanceof ResolveDynamicConstantNode) {
                 if (graph.getGuardsStage().areFrameStatesAtDeopts()) {
                     resolveConstantSnippets.lower((ResolveDynamicConstantNode) n, tool);

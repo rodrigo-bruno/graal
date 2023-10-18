@@ -24,8 +24,12 @@
  */
 package org.graalvm.compiler.core.test.tutorial;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Spliterator.OfInt;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 import org.graalvm.compiler.bytecode.BytecodeDisassembler;
 import org.junit.Assert;
@@ -66,6 +70,7 @@ public class GraalTutorial extends InvokeGraal {
          * and more.
          */
         String disassembly = new BytecodeDisassembler().disassemble(method);
+        System.out.println(disassembly);
 
         /*
          * We don't want test cases to print any output, so we check the validity of the output
@@ -162,6 +167,24 @@ public class GraalTutorial extends InvokeGraal {
         InstalledCode compiledMethod = compileAndInstallMethod(findMethod(GraalTutorial.class, "identityHashCodeUsage"));
 
         int result = (int) compiledMethod.executeVarargs(a);
+        Assert.assertEquals(expectedResult, result);
+    }
+
+    public static int intStreamUsage(IntStream stream) {
+        return stream.sum();
+    }
+
+    @Test
+    public void testIntStreamUsage() throws InvalidInstalledCodeException {
+        int[] buffer = new int[16];
+        IntStream exp_stream = Arrays.stream(buffer);
+        IntStream res_stream = Arrays.stream(buffer);
+
+        int expectedResult = intStreamUsage(exp_stream);
+
+        InstalledCode compiledMethod = compileAndInstallMethod(findMethod(GraalTutorial.class, "intStreamUsage"));
+
+        int result = (int) compiledMethod.executeVarargs(res_stream);
         Assert.assertEquals(expectedResult, result);
     }
 
